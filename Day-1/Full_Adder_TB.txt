@@ -1,0 +1,18 @@
+`timescale 1ns / 100ps
+
+
+
+module FA_TB;
+reg a,b,cin;
+wire s,c;
+FA FA1(s,c,a,b,cin);
+initial
+    begin
+        $monitor("time=%d\ta=%b\tb=%b\tcin=%b\ts=%b\tc=%b",$time,a,b,cin,s,c);
+        a=0;b=0;cin=0;//{a,b,c}=0; 
+        #10 a=0;b=0;cin=1;
+        #10 b=1;
+        #10 cin=1;
+        #10 $stop;
+    end    
+endmodule

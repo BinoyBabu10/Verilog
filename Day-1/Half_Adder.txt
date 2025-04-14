@@ -1,0 +1,33 @@
+`timescale 1ns / 1ps
+
+//Dataflow
+//module HA(S,C,a,b);
+//input a,b;
+//output S,C;
+//assign S=a^b;
+//assign C=a&b;
+//endmodule
+
+
+
+////Behavioral
+//module HA(s,c,a,b);
+//input a,b;
+//output reg s,c;
+//always@(*)
+//begin 
+//    s=a^b;
+//    c=a&b;
+//end
+//endmodule   
+
+
+
+//Structural
+
+module HA(y,c,a,b);
+input a,b;
+output y,c;
+xor x1(y,a,b);
+and x2(c,a,b);
+endmodule  

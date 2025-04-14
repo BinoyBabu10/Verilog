@@ -1,0 +1,18 @@
+`timescale 1ns / 1ps
+
+
+
+module mux_2x1_TB;
+reg s;
+reg [1:0]i;
+wire y;
+mux_2x1 m1(.Y(y),.S(s),.I(i));
+initial begin
+$monitor("time=%t\ts=%b\ty=%b",$time,s,y);
+s=0;i[0]=0;i[1]=1;
+#10 s=0;
+#10 s=1;
+#10 $stop;
+end
+
+endmodule

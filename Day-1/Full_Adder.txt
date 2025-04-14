@@ -1,0 +1,25 @@
+`timescale 1ns / 1ps
+
+//structural
+//module FA(s,c,a,b,cin);
+//input a,b,cin;
+//output s,c;
+//wire w1,w2,w3,w4;
+//xor x1(w1,a,b);
+//xor x2(s,w1,cin);
+//and a1(w2,a,b);
+//and a2(w3,b,cin);
+//and a3(w4,a,cin);
+//or a4(c,w2,w3,w4);
+//endmodule
+
+
+
+module FA(s,c,a,b,cin);
+input a,b,cin;
+output s,c;
+wire n1,n2,n3;
+HA h1(n1,n2,a,b);
+HA h2(s,n3,n1,cin);
+or o1(c,n3,n2);
+endmodule

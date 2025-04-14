@@ -1,0 +1,25 @@
+`timescale 1ns / 1ps
+
+
+
+module FA_4bit(s,cout,a,b,cin);
+input [3:0]a,b;
+input cin;
+output [3:0]s;
+output cout;
+wire n1,n2,n3;
+FA fa1(s[0],n1,a[0],b[0],cin);
+FA fa2(s[1],n2,a[1],b[1],n1);
+FA fa3(s[2],n3,a[2],b[2],n2);
+FA fa4(s[3],cout,a[3],b[3],n3);
+endmodule
+
+
+//dataflow
+//module FA_4bit(s,,cout,a,b,cin);
+//input [3:0]a,b;
+//input cin;
+//output [3:0]s;
+//output cout;
+//assign {cout,s}=a+b+cin;
+//endmodule
