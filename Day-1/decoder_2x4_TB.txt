@@ -1,0 +1,19 @@
+`timescale 1ns / 1ps
+
+
+
+module decoder_2x4_TB;
+reg [1:0]i;
+reg e;
+wire [3:0]y;
+decoder_2x4 dut(.Y(y),.I(i),.E(e));
+initial begin
+$monitor("time=%t\t e=%b\ti=%b\ty=%b",$time,e,i,y);
+ e=1;
+ #10 i=2'b00;
+ #10 i=2'b01;
+ #10 i=2'b10;
+ #10 i=2'b11;
+ #10 $stop;
+ end
+endmodule

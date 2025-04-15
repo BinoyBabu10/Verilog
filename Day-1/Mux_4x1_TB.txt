@@ -1,0 +1,19 @@
+`timescale 1ns / 1ps
+
+module mux_4x1_TB;
+reg [1:0] s;
+reg [3:0] i;
+wire [3:0]y;
+mux_4x1 Dut(.y(y),.s(s),.i(i));
+initial begin
+$monitor("time=%t\t s=%b\t i=%b\t y=%b",$time,s,i,y);
+{i,s}=6'b000000;
+#15 i=4'b0001;s=2'b00;
+#15 i=4'b0010;s=2'b01;
+#15 i=4'b0100;s=2'b10;
+#15 i=4'b1000;s=2'b11;
+#15 $stop;
+end
+
+
+endmodule
