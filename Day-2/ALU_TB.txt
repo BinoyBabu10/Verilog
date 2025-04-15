@@ -1,0 +1,72 @@
+`timescale 1ns / 1ps
+
+
+
+module ALU_TB;
+    reg [3:0] a, b, opcode;
+    wire [3:0] x, y;
+
+    // Instantiate the ALU
+    ALU uut (
+        .x(x),
+        .y(y),
+        .a(a),
+        .b(b),
+        .opcode(opcode)
+    );
+
+    initial begin
+        $monitor("Time=%0t | opcode=%b | a=%b | b=%b | x=%b | y=%b", $time, opcode, a, b, x, y);
+
+        // Test reduction OR (opcode 0000)
+        a = 4'b0101; b = 4'b0000; opcode = 4'b0000; #10;
+
+        // Test reduction AND (0001)
+        a = 4'b1111; opcode = 4'b0001; #10;
+
+        // Test reduction XOR (0010)
+        a = 4'b1001; opcode = 4'b0010; #10;
+
+        // Test AND (0011)
+        a = 4'b1010; b = 4'b1100; opcode = 4'b0011; #10;
+
+        // Test OR (0100)
+        opcode = 4'b0100; #10;
+
+        // Test XOR (0101)
+        opcode = 4'b0101; #10;
+
+        // Test greater than (0110)
+        a = 4'b1001; b = 4'b0110; opcode = 4'b0110; #10;
+
+        // Test less than (0111)
+        opcode = 4'b0111; a = 4'b0010; b = 4'b1010; #10;
+
+        // Test logical NOT (1000)
+        a = 4'b0000; opcode = 4'b1000; #10;
+
+        // Test equality (1001)
+        a = 4'b0101; b = 4'b0101; opcode = 4'b1001; #10;
+
+        // Test addition with carry (1010)
+        a = 4'b1111; b = 4'b0001; opcode = 4'b1010; #10;
+
+        // Test subtraction (1011)
+        a = 4'b1000; b = 4'b0011; opcode = 4'b1011; #10;
+
+        // Test multiplication (1100)
+        a = 4'b0011; b = 4'b0100; opcode = 4'b1100; #10;
+
+        // Test right shift (1101)
+        a = 4'b1000; b = 4'b0010; opcode = 4'b1101; #10;
+
+        // Test left shift (1110)
+        opcode = 4'b1110; #10;
+
+        // Test bitwise NOT (1111)
+        a = 4'b1010; opcode = 4'b1111; #10;
+
+        $stop;
+    end
+endmodule
+

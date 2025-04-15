@@ -1,0 +1,16 @@
+`timescale 1ns / 1ps
+
+
+module comparator_4bit_TB;
+reg [3:0]A,B;
+wire Eq,Gt,Sm;
+comparator_4bit DUT(Eq,Gt,Sm,A,B);
+initial begin
+$monitor("time=%t\t,A=%b\t,B=%b\t,Eq=%b\t,Gt=%b\t,Sm=%b",$time,A,B,Eq,Gt,Sm);
+{A,B}=8'b00000000;
+#10 {A,B}=8'b00010001;
+#10 {A,B}=8'b10000010;
+#10 {A,B}=8'b00011000;
+#10 $stop;
+end
+endmodule

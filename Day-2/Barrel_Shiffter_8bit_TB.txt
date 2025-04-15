@@ -1,0 +1,41 @@
+`timescale 1ns / 1ps
+
+
+module barrel_shifter_8bit_TB;
+    reg [7:0] In;
+    reg [2:0] n;
+    reg Lr;
+    wire [7:0] out;
+
+    // Instantiate the DUT (Device Under Test)
+    barrel_shifter_8bit dut (
+        .out(out),
+        .In(In),
+        .Lr(Lr),
+        .n(n)
+    );
+
+    initial begin
+        // Monitor signals
+        $monitor("time=%t\t In=%b\t n=%d\t Lr=%b\t out=%b", $time, In, n, Lr, out);
+
+        // Test Left Shift (Lr = 1)
+        In = 8'b00010001; n = 3'd0; Lr = 1; #10;
+        n = 3'd1; #10;
+        n = 3'd2; #10;
+        n = 3'd3; #10;
+        n = 3'd4; #10;
+
+        // Test Right Shift (Lr = 0)
+        Lr = 0; n = 3'd0; #10;
+        n = 3'd1; #10;
+        n = 3'd2; #10;
+        n = 3'd3; #10;
+        n = 3'd4; #10;
+
+        // End simulation
+        $stop;
+    end
+endmodule
+
+

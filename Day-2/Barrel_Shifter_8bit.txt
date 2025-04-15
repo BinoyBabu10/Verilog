@@ -1,0 +1,16 @@
+`timescale 1ns / 1ps
+
+
+
+module barrel_shifter_8bit(out,In,Lr,n);
+input[7:0]In;
+input [2:0]n;
+input Lr;
+output reg[7:0]out;
+always@(*) begin
+    if(Lr)
+        out=In<<n;
+    else
+        out=In>>n;
+end
+endmodule            
