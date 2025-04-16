@@ -1,0 +1,22 @@
+`timescale 1ns / 1ps
+
+
+
+module D_FF_TB;
+reg d,clk,rst;
+wire q;
+D_FF DUT(.q(q),.d(d),.clk(clk),.rst(rst));
+initial begin
+    clk=0;
+    forever #5 clk=~clk;
+end 
+initial begin
+$monitor("time=%t\t,rst=%b\t,d=%b\t,q=%b",$time,rst,d,q);
+d=0;rst=0;
+repeat(10)begin
+#10 d=~d;
+end
+#10 d=1;
+#10 $stop;
+end
+endmodule

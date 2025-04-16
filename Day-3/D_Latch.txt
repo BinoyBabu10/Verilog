@@ -1,0 +1,28 @@
+`timescale 1ns / 1ps
+
+
+
+//module D_Latch(q,d,en);
+//input en,d;
+//output q;
+//assign q=en?d:q;
+//endmodule
+
+//module D_Latch(q,d,en);
+//input en,d;
+//output reg q;
+//always@(en,q)
+//if(en) q=d;
+//endmodule
+
+
+//Behavioral with ASYNC RESET
+module D_Latch(q,d,en,rst);
+input en,d,rst;
+output reg q;
+always@(en,q,rst)
+if(rst)
+q=1'b0;
+else if(en)
+q=d;
+endmodule 

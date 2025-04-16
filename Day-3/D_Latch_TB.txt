@@ -1,0 +1,17 @@
+`timescale 1ns / 1ps
+
+
+
+module D_Latch_TB;
+reg d,en,rst;
+wire q;
+D_Latch DUT(.q(q),.d(d),.en(en),.rst(rst));
+initial  begin
+$monitor("time=%t\t,en=%b\t,d=%b\t,rst=%b\t,q=%b",$time,en,d,rst,q);
+d=0;en=0;rst=0;
+#10 en=1;d=1;
+#10 d=0;
+#10 rst=1;
+#10 $stop;
+end
+endmodule
