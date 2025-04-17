@@ -1,0 +1,56 @@
+`timescale 1ns / 1ps
+
+
+module LR_5bit_Shift_TB;
+// Inputs
+  reg clk;
+  reg rst;
+  reg si;
+
+  // Output
+  wire so;
+
+  // Instantiate the Unit Under Test (UUT)
+  LR_5bit_Shift uut (
+    .so(so),
+    .clk(clk),
+    .rst(rst),
+    .si(si)
+  );
+
+  // Clock generation
+  initial begin
+    clk = 0;
+    forever #5 clk = ~clk; // 10ns period
+  end
+
+  // Stimulus
+  initial begin
+    // Initial values
+    rst = 0;
+    si = 0;
+
+    // Apply reset (active low)
+    #5 rst = 0;
+    #10 rst = 1;  // Deassert reset
+
+    // Shift in bits
+    #10 si = 1;
+    #10 si = 0;
+    #10 si = 1;
+    #10 si = 1;
+    #10 si = 0;
+
+    // Hold input
+    #10 si = 1;
+    #20;
+
+    // End simulation
+    $finish;
+  end
+
+  // Monitor output
+  initial begin
+    $monitor("Time=%0t | rst=%b | si=%b => sr[4] (so)=%b", $time, rst, si, so);
+  end
+endmodule

@@ -1,0 +1,63 @@
+`timescale 1ns / 1ps
+
+
+
+module counter_up_down_TB;
+// Inputs
+  reg [7:0] data;
+  reg clk, rst, load, u_d;
+
+  // Output
+  wire [7:0] count;
+
+  // Instantiate the Unit Under Test (UUT)
+  counter_up_down uut (
+    .count(count),
+    .u_d(u_d),
+    .load(load),
+    .clk(clk),
+    .rst(rst),
+    .data(data)
+  );
+
+  // Clock generation
+  initial begin
+    clk = 0;
+    forever #5 clk = ~clk; // 10ns clock period
+  end
+
+  // Stimulus
+  initial begin
+    // Initial values
+    rst = 0; load = 0; u_d = 0; data = 8'd0;
+
+    // Apply reset (active low)
+    #7 rst = 0;
+    #10 rst = 1;
+
+    // Load a value
+    #10 load = 1; data = 8'd100;
+    #10 load = 0;
+
+    // Count up
+    u_d = 1;
+    repeat (5) #10;
+
+    // Count down
+    u_d = 0;
+    repeat (5) #10;
+
+    // Reset again
+    rst = 0;
+    #10 rst = 1;
+
+    // Finish simulation
+    #10 $finish;
+  end
+
+  // Monitor
+  initial begin
+    $monitor("Time=%0t | rst=%b | load=%b | u_d=%b | data=%b | count=%b", 
+              $time, rst, load, u_d, data, count);
+  end
+endmodule

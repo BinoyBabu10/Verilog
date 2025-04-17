@@ -1,0 +1,52 @@
+`timescale 1ns / 1ps
+
+
+
+module up_counter_TB;
+// Inputs
+  reg clk;
+  reg rst;
+
+  // Output
+  wire [7:0] count;
+
+  // Instantiate the Unit Under Test (UUT)
+  up_counter uut (
+    .count(count),
+    .clk(clk),
+    .rst(rst)
+  );
+
+  // Clock generation
+  initial begin
+    clk = 0;
+    forever #5 clk = ~clk; // Clock toggles every 5ns (10ns period)
+  end
+
+  // Stimulus
+  initial begin
+    // Initialize inputs
+    rst = 0;
+
+    // Hold reset low for a bit, then deassert it
+    #10 rst = 1;
+
+    // Wait and observe counting
+    #100;
+
+    // Apply reset again during operation
+    rst = 0;
+    #10 rst = 1;
+
+    // Observe counter again
+    #50;
+
+    // Finish simulation
+    $finish;
+  end
+
+  // Monitor output
+  initial begin
+    $monitor("Time=%0t | rst=%b | count=%B", $time, rst, count);
+  end
+endmodule
