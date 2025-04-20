@@ -1,0 +1,21 @@
+`timescale 1ns / 1ps
+
+
+module counte_10_to_40(
+    output reg [7:0] count,
+    input clk,
+    input rst,
+    input [7:0] data  // Unused, but kept if you intend to use it later
+);
+
+always @(posedge clk or posedge rst) begin
+    if (rst)
+        count <= 8'd10;  // Reset to 10
+    else if (count >= 8'd40)
+        count <= 8'd10;  // Reset to 10 when it exceeds 40
+    else
+        count <= count + 1;  // Increment otherwise
+end
+
+endmodule
+

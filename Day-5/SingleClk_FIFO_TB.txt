@@ -1,0 +1,81 @@
+`timescale 1ns / 1ps
+
+
+module SingleClk_FIFO_TB;
+
+    // Declare inputs as registers and outputs as wires
+    reg clk, rst, wr_en, rd_en;
+    reg [7:0] buf_in;
+    wire [7:0] buf_out;
+    wire buf_empty, buf_full;
+    wire [7:0] fifo_counter;
+
+    // Instantiate the FIFO module (DUT)
+    SingleClk_FIFO DUT (
+        .clk(clk),
+        .rst(rst),
+        .wr_en(wr_en),
+        .rd_en(rd_en),
+        .buf_in(buf_in),
+        .buf_out(buf_out),
+        .buf_empty(buf_empty),
+        .buf_full(buf_full),
+        .fifo_counter(fifo_counter)
+    );
+
+    // Clock generation
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;  // Clock period 10 ns (100 MHz)
+    end
+
+    // Test sequence
+    initial begin
+        // Initialize signals
+        rst = 0;
+        wr_en = 0;
+        rd_en = 0;
+        buf_in = 8'd0;
+
+        // Monitor the signals
+        $monitor("Time=%0t, clk=%b, rst=%b, wr_en=%b, rd_en=%b, buf_in=%b, buf_out=%b, buf_empty=%b, buf_full=%b, fifo_counter=%b", 
+                 $time, clk, rst, wr_en, rd_en, buf_in, buf_out, buf_empty, buf_full, fifo_counter);
+
+        // Apply reset
+        #10 rst = 1;   // Assert reset
+        #10 rst = 0;   // Deassert reset
+
+        // Test FIFO Write
+        #10 wr_en = 1; buf_in = 8'd10;  // Write 10
+        #10 wr_en = 1; buf_in = 8'd20;  // Write 20
+        #10 wr_en = 1; buf_in = 8'd30;  // Write 30
+        #10 wr_en = 0;                   // Stop writing
+
+        // Test FIFO Read
+        #10 rd_en = 1;  // Read data
+        #10 rd_en = 1;  // Read another data
+        #10 rd_en = 0;  // Stop reading
+
+        // Test FIFO Full Condition (wr_en = 1 while FIFO is full)
+        #10 wr_en = 1; buf_in = 8'd40; // Should write because FIFO has space
+        #10 wr_en = 1; buf_in = 8'd50; // Should write
+        // Continue writing until FIFO is full
+
+        // Test FIFO Empty Condition (rd_en = 1 while FIFO is empty)
+        #10 rd_en = 1; // Should read until FIFO is empty
+
+        // Test additional writes and reads
+        #10 wr_en = 1; buf_in = 8'd60; // Write 60
+        #10 wr_en = 0; // Stop writing
+        #10 rd_en = 1;  // Read 60
+
+        // Test Full condition
+        #10 wr_en = 1; buf_in = 8'd70; // Write should not occur if FIFO is full
+        #10 rd_en = 1;  // Read data from FIFO again
+        #10 rd_en = 1;
+
+        // End the simulation
+        #50 $stop;
+    end
+
+endmodule

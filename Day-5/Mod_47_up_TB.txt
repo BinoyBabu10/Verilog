@@ -1,0 +1,28 @@
+`timescale 1ns / 1ps
+
+module Mod_47_up_TB;
+
+    reg clk;
+    reg rst;
+    wire [5:0] out; // assuming 6-bit output
+
+    // Instantiate your DUT
+    Mod47_up DUT (
+        .clk(clk),
+        .rst(rst),
+        .count(out)
+    );
+
+    // Generate clock
+    initial clk = 0;
+    always #5 clk = ~clk; // 10ns clock period
+
+    // Apply reset and stimulus
+    initial begin
+        rst = 1;
+        #15 rst = 0;
+
+        #200 $finish;
+    end
+
+endmodule

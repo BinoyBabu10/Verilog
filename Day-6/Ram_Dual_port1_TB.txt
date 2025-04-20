@@ -1,0 +1,72 @@
+`timescale 1ns / 1ps
+
+
+
+module ram_dualport1_TB;
+// Testbench signals
+    reg [7:0] data;
+    reg [5:0] read_addr, write_addr;
+    reg we, read_clk, write_clk;
+    wire [7:0] q;
+
+    // Instantiate the RAM module
+    ram_dual_port1 uut (
+        .q(q),
+        .data(data),
+        .read_addr(read_addr),
+        .write_addr(write_addr),
+        .we(we),
+        .read_clk(read_clk),
+        .write_clk(write_clk)
+    );
+
+    // Clock generation
+    initial begin
+        write_clk = 0;
+        read_clk = 0;
+        forever #5 write_clk = ~write_clk;  // 10 ns period
+    end
+
+    initial begin
+        forever #7 read_clk = ~read_clk;    // 14 ns period
+    end
+
+    // Stimulus
+    initial begin
+        // Initialize signals
+        data = 0;
+        write_addr = 0;
+        read_addr = 0;
+        we = 0;
+
+        // Wait for a few clock cycles
+        #20;
+
+        // Write values to RAM
+        we = 1;
+        data = 8'hAA; write_addr = 6'd5; #10;  // write at addr 5
+        data = 8'hBB; write_addr = 6'd10; #10; // write at addr 10
+        data = 8'hCC; write_addr = 6'd20; #10; // write at addr 20
+        we = 0;
+
+        // Wait a bit before reading
+        #20;
+
+        // Read values from RAM
+        read_addr = 6'd5;  #14;
+        $display("Read from addr 5: %h", q);
+
+        read_addr = 6'd10; #14;
+        $display("Read from addr 10: %h", q);
+
+        read_addr = 6'd20; #14;
+        $display("Read from addr 20: %h", q);
+
+        read_addr = 6'd30; #14;
+        $display("Read from addr 30 (default): %h", q); // should be 0
+
+        // Finish simulation
+        #20;
+        $finish;
+    end
+endmodule

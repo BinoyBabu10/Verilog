@@ -1,0 +1,37 @@
+`timescale 1ns / 1ps
+
+
+module counter_10_to40_TB;
+    reg clk, rst;
+    reg [7:0] data;
+    wire [7:0] count;
+    
+    // Instantiate the Device Under Test (DUT)
+    counte_10_to_40 DUT (
+        .count(count),
+        .clk(clk),
+        .rst(rst),
+        .data(data)
+    );
+    
+    // Clock Generation
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+    
+    // Stimulus Generation
+    initial begin
+        // Monitor signals
+        $monitor("$time=%0t,\tclk=%b,\trst=%b,\tcount=%b", $time, clk, rst, count);
+        
+        // Apply reset and test
+        rst = 0;  // Initially, reset is low
+        #10 rst = 1;  // Assert reset after 10 ns
+        #10 rst = 0;  // Deassert reset after 10 ns
+        
+        // Wait for some time and then stop the simulation
+        #500 $stop;  // End the simulation after 500 ns
+    end
+    
+endmodule

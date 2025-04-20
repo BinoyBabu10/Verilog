@@ -1,0 +1,37 @@
+`timescale 1ns / 1ps
+
+
+module counter_10t040_up_down(
+    output reg [7:0] count,  // output reg to store the count value
+    input [7:0] data,        // data input to load into the counter
+    input rst,                // reset signal
+    input clk,                // clock signal
+    input u_d,                // up/down control (1 for up, 0 for down)
+    input load                // load control (1 to load the data into the counter)
+);
+    reg [7:0] count_temp;  // temporary internal register to hold the count value
+
+    // Always block triggered by the rising edge of the clock or reset
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            count_temp <= 8'd10;  // Reset to 10 on reset
+        end
+        else if (load) begin
+            count_temp <= data;   // Load data into the counter when load is asserted
+        end
+        else if (u_d) begin
+            // Up count: if count is >= 40, reset to 10
+            count_temp <= (count_temp >= 8'd40) ? 8'd10 : count_temp + 1;
+        end
+        else begin
+            // Down count: if count is <= 10, reset to 40
+            count_temp <= (count_temp <= 8'd10) ? 8'd40 : count_temp - 1;
+        end
+    end
+
+    // Directly assign count_temp to count inside the always block (no assign statement needed)
+    always @(count_temp) begin
+        count <= count_temp;
+    end
+
+endmodule

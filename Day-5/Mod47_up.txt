@@ -1,0 +1,18 @@
+`timescale 1ns / 1ps
+
+
+module Mod47_up(
+    input clk,
+    input rst,            // active-high synchronous reset
+    input [7:0] data,     // unused input in current logic
+    output reg [7:0] count
+);
+
+always @(posedge clk) begin
+    if (rst || count >= 8'd46)
+        count <= 8'd0;
+    else
+        count <= count + 1;
+end
+
+endmodule

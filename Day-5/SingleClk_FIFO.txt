@@ -1,0 +1,84 @@
+`timescale 1ns / 1ps
+
+
+module SingleClk_FIFO(
+    input clk, 
+    input rst, 
+    input [7:0] buf_in, 
+    output reg [7:0] buf_out,
+    input wr_en, 
+    input rd_en, 
+    output reg buf_empty, 
+    output reg buf_full, 
+    output reg [7:0] fifo_counter
+);
+    // Internal registers
+    reg [6:0] fifo_counter;
+    reg [3:0] rd_ptr, wr_ptr;
+    reg [7:0] buf_mem[63:0];  // FIFO memory with 64 entries
+
+    // Update full/empty status based on fifo_counter
+    always @(fifo_counter) begin
+        buf_empty = (fifo_counter == 0);
+        buf_full = (fifo_counter == 64);
+    end
+
+    // FIFO counter logic to track the number of elements
+    always @(posedge clk or posedge rst) begin
+        if (rst)
+            fifo_counter <= 0;
+        else if ((!buf_full && wr_en) && (!buf_empty && rd_en))  // both write and read
+            fifo_counter <= fifo_counter;  // No change in count if both read and write happen
+        else if (!buf_full && wr_en) 
+            fifo_counter <= fifo_counter + 1;  // Increment count on write
+        else if (!buf_empty && rd_en) 
+            fifo_counter <= fifo_counter - 1;  // Decrement count on read
+    end
+
+    // Output buffer logic (read from memory on read enable)
+    always @(posedge clk or posedge rst) begin
+        if (rst)
+            buf_out <= 0;
+        else if (rd_en && !buf_empty)
+            buf_out <= buf_mem[rd_ptr];  // Read data from FIFO memory
+    end
+
+    // Write data to FIFO memory
+    always @(posedge clk) begin
+        if (wr_en && !buf_full)
+            buf_mem[wr_ptr] <= buf_in;  // Write data to memory at wr_ptr
+    end
+
+    // Read and write pointer logic
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            wr_ptr <= 0;
+            rd_ptr <= 0;
+        end
+        else begin
+            // Write pointer logic
+            if (!buf_full && wr_en)
+                wr_ptr <= wr_ptr + 1;  // Increment write pointer
+            else
+                wr_ptr <= wr_ptr;
+            
+            // Read pointer logic
+            if (!buf_empty && rd_en)
+                rd_ptr <= rd_ptr + 1;  // Increment read pointer
+            else
+                rd_ptr <= rd_ptr;
+        end
+    end
+
+    // Modulo wrapping for pointers to ensure they wrap around
+    always @(posedge clk) begin
+        if (rst) begin
+            wr_ptr <= 0;
+            rd_ptr <= 0;
+        end else begin
+            wr_ptr <= (wr_ptr == 63) ? 0 : wr_ptr + 1;  // Wrap wr_ptr
+            rd_ptr <= (rd_ptr == 63) ? 0 : rd_ptr + 1;  // Wrap rd_ptr
+        end
+    end
+
+endmodule

@@ -1,0 +1,66 @@
+`timescale 1ns / 1ps
+
+
+module ram_single_port1_TB;
+
+  // Inputs
+  reg [7:0] data;
+  reg [5:0] read_addr, write_addr;
+  reg we, clk;
+
+  // Output
+  wire [7:0] q;
+
+  // Instantiate the Unit Under Test (UUT)
+  ram_single_port1 uut (
+    .q(q),
+    .data(data),
+    .read_addr(read_addr),
+    .write_addr(write_addr),
+    .we(we),
+    .clk(clk)
+  );
+
+  // Clock generation
+  initial begin
+    clk = 0;
+    forever #5 clk = ~clk; // 10ns clock period
+  end
+
+  // Test sequence
+  initial begin
+    // Initialize signals
+    data = 0;
+    write_addr = 0;
+    read_addr = 0;
+    we = 0;
+
+    // Wait for global reset
+    #10;
+
+    // Write data to addresses 0 to 4
+    repeat (5) begin
+      @(posedge clk);
+      data = data + 1;
+      write_addr = write_addr + 1;
+      we = 1;
+    end
+
+    // Stop writing
+    @(posedge clk);
+    we = 0;
+
+    // Read back data from addresses 1 to 5
+    #10;
+    $display("Reading values from RAM:");
+    for (integer i = 1; i <= 5; i = i + 1) begin
+      @(posedge clk);
+      read_addr = i;
+      #1 $display("At time %0t: RAM[%0d] = %0d", $time, read_addr, q);
+    end
+
+    $finish;
+  end
+
+
+endmodule
